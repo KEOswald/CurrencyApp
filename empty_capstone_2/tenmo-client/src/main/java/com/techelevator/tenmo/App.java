@@ -66,15 +66,13 @@ public class App {
             consoleService.printMainMenu();
             menuSelection = consoleService.promptForMenuSelection("Please choose an option: ");
             if (menuSelection == 1) {
-                viewCurrentBalance();
+                viewCurrentExchangeRates();
             } else if (menuSelection == 2) {
-                viewTransferHistory();
+                addFundsToAccount();
             } else if (menuSelection == 3) {
-                viewPendingRequests();
+                makeAnExchange();
             } else if (menuSelection == 4) {
-                sendBucks();
-            } else if (menuSelection == 5) {
-                requestBucks();
+                viewExchangeHistory();;
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -84,29 +82,23 @@ public class App {
         }
     }
 
-	private void viewCurrentBalance() {
+	private void viewCurrentExchangeRates() {
+
+	}
+    private void addFundsToAccount() {
+
+    }
+    private void makeAnExchange() {
+
+    }
+
+	private void viewExchangeHistory() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private void sendBucks() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	private void requestBucks() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

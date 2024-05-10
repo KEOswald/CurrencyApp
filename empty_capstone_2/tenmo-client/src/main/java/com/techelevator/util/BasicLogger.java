@@ -12,7 +12,9 @@ public class BasicLogger {
 
 	private static PrintWriter pw = null;
 	private static final String DIRECTORY_NAME = "tenmo-client";
-	
+
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS.n");
+
 	public static void log(String message) {
 		try {
 			if (pw == null) {
@@ -25,7 +27,7 @@ public class BasicLogger {
 				String logFilename = userDir + File.separator + "logs/" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".log";
 				pw = new PrintWriter(new FileOutputStream(logFilename, true));
 			}
-			pw.println(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + " " + message);
+			pw.println(LocalDateTime.now().format(formatter) + " " + message);
 			pw.flush();
 		}
 		catch (FileNotFoundException e) {
