@@ -2,14 +2,14 @@ package com.techelevator.tenmo.model;
 
 public class AuthenticatedUser {
 	
-	private String token;
+	private static String token;
 	private User user;
 	
-	public String getToken() {
+	public static String getToken() {
 		return token;
 	}
 	public void setToken(String token) {
-		this.token = token;
+		AuthenticatedUser.token = token;
 	}
 	public User getUser() {
 		return user;

@@ -20,10 +20,15 @@ import java.util.List;
             String sql = "SELECT balance FROM account WHERE account_id = ?";
             return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
         }
-        private int getaccountID(int userId) {
-            String sql = "SELECT account_id FROM account WHERE user_id = ?";
-            return jdbcTemplate.queryForObject(sql, Integer.class, userId);
+
+    private int getaccountID(int userId) {
+        String sql = "SELECT account_id FROM account WHERE user_id = ?";
+        Integer accountId = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        if (accountId == null) {
+            throw new IllegalArgumentException("Account not found for user ID: " + userId);
         }
+        return accountId;
+    }
         @Override
         public Transfer createTransfer(int userFromId, int userToId, BigDecimal amount) {
 
@@ -56,14 +61,26 @@ import java.util.List;
             return getTransferById(transferId);
         }
 
-        @Override
-        public void deposit(int accountId, BigDecimal amount) {
-            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Deposit amount cannot be negative");
-            }
-            String sqlUpdateBalance = "UPDATE account SET balance = balance + ? WHERE account_id = ?";
-            jdbcTemplate.update(sqlUpdateBalance, amount, accountId);
+    @Override
+    public void deposit(int userId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Deposit amount cannot be negative");
         }
+
+        // Fetch the account ID associated with the user ID
+        int accountId = getAccountIdByUserId(userId);
+        if (accountId == 0) {
+            throw new IllegalArgumentException("Account not found for user ID: " + userId);
+        }
+
+        String sqlUpdateBalance = "UPDATE account SET balance = balance + ? WHERE account_id = ?";
+        jdbcTemplate.update(sqlUpdateBalance, amount, accountId);
+    }
+
+    private int getAccountIdByUserId(int userId) {
+        String sql = "SELECT account_id FROM account WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId);
+    }
 
         @Override
         public List<Transfer> getTransfersByUserId(int userId) {

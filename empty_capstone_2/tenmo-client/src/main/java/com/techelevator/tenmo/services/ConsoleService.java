@@ -40,8 +40,8 @@ public class ConsoleService {
         System.out.println("1: View all currencies");
         System.out.println("2: View currency by region");
         System.out.println("3: View Current Account Balance");
-        System.out.println("4: View past exchanges");
-        System.out.println("5: TEST FILLER");
+        System.out.println("4: Deposit Into Your Account");
+        System.out.println("5: Transfer Test");
         System.out.println("0: Exit");
         System.out.println();
     }

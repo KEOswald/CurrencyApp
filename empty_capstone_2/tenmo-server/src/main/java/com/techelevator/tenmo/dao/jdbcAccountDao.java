@@ -25,6 +25,17 @@ public jdbcAccountDao(JdbcTemplate jdbcTemplate) {
        }
     }
 
+    @Override
+    public Account getAccountByUserId(int userId) {
+    String sql = "Select account_id, user_id, balance FROM Account WHERE user_id = ?";
+    SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+    if (results.next()) {
+        return mapRowToAccount(results);
+    } else {
+        return null;
+        }
+    }
+
     private Account mapRowToAccount(SqlRowSet results) {
         Account account = new Account();
         account.setAccountId(results.getInt("account_id")); // Set the account ID
