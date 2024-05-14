@@ -37,9 +37,9 @@ public class ConsoleService {
 
     public void printMainMenu() {
         System.out.println();
-        System.out.println("1: View current exchanges");
-        System.out.println("2: Add money to your account");
-        System.out.println("3: Make a currency exchange");
+        System.out.println("1: View all currencies");
+        System.out.println("2: View currency by region");
+        System.out.println("3: View Current Account Balance");
         System.out.println("4: View past exchanges");
         System.out.println("5: TEST FILLER");
         System.out.println("0: Exit");

@@ -1,18 +1,19 @@
-package com.techelevator.tenmo;
+package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.ConsoleService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
-
+    private AuthenticatedUser currentUser;
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
-
-    private AuthenticatedUser currentUser;
+    private final AccountService accountService = new AccountService(API_BASE_URL, currentUser);
+    private final CurrencyService currencyService = new CurrencyService(API_BASE_URL);
 
     public static void main(String[] args) {
         App app = new App();
@@ -66,13 +67,13 @@ public class App {
             consoleService.printMainMenu();
             menuSelection = consoleService.promptForMenuSelection("Please choose an option: ");
             if (menuSelection == 1) {
-                viewCurrentExchangeRates();
+                displayCurrencies();
             } else if (menuSelection == 2) {
-                addFundsToAccount();
+               displayAllCurrenciesByRegion();
             } else if (menuSelection == 3) {
-                makeAnExchange();
+                viewCurrentBalance();
             } else if (menuSelection == 4) {
-                viewExchangeHistory();;
+                makeDeposit();
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -82,14 +83,60 @@ public class App {
         }
     }
 
-	private void viewCurrentExchangeRates() {
+    private void viewCurrentBalance() {
+        if (currentUser != null) {
+            try {
+                AccountService service = new AccountService(API_BASE_URL, currentUser);
+                double balance = service.getCurrentUserBalance();
+                System.out.println("Current balance : $" + balance);
+            } catch (Exception e) {
+                System.out.println("Failed to get Balance");
+            }
+        }
+    }
 
-	}
-    private void addFundsToAccount() {
 
+    private void displayCurrencies() {
+        currencyService.displayAllCurrencies(); // Call the displayAllCurrencies method from CurrencyService
+    }
+    private void displayAllCurrenciesByRegion() {
+        Map<Integer, String> regionOptions = new HashMap<>();
+        regionOptions.put(1, "Europe");
+        regionOptions.put(2, "North America");
+        regionOptions.put(3, "South America");
+        regionOptions.put(4, "Africa");
+        regionOptions.put(5, "Oceania");
+        regionOptions.put(6, "Caribbean");
+        regionOptions.put(7, "Middle East");
+        regionOptions.put(8, "Central America");
+        regionOptions.put(9, "Crypto & Commodity");
+        regionOptions.put(10, "Unknown");
+
+        System.out.println("Select a region:");
+
+        for (Map.Entry<Integer, String> entry : regionOptions.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+        int choice = consoleService.promptForInt("Enter your choice: ");
+
+        if (regionOptions.containsKey(choice)) {
+            String selectedRegion = regionOptions.get(choice);
+            currencyService.displayCurrenciesByRegion(selectedRegion);
+        } else {
+            System.out.println("Invalid choice.");
+        }
     }
     private void makeAnExchange() {
 
+    }
+    private void makeDeposit() {
+        AccountService deposit = new AccountService(API_BASE_URL + "/account/deposit", currentUser);
+        deposit.depositMoney();
+    }
+    private void sendBucks() {
+        AccountService service = new AccountService(API_BASE_URL + "/account/transfer", currentUser);
+        service.sendBucks();
     }
 
 	private void viewExchangeHistory() {

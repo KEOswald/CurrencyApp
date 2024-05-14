@@ -6,7 +6,7 @@ public class User {
 
     private int id;
     private String username;
-
+    private int accountId;
     public int getId() {
         return id;
     }
@@ -37,5 +37,12 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id, username);
+    }
+
+    public int getAccountId() {
+        return accountId;
+    }
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
     }
 }
