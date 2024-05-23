@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exception.DaoException;
+import com.techelevator.tenmo.model.RecipientsDTO;
 import com.techelevator.tenmo.model.RegisterUserDto;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,6 +39,21 @@ public class JdbcUserDao implements UserDao {
         }
         return user;
     }
+
+    public List<RecipientsDTO> listUsers() {
+        List<RecipientsDTO> recipients = new ArrayList<>();
+
+        String sql = "SELECT user_id, username FROM tenmo_user";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+        while (results.next()) {
+            RecipientsDTO dto = new RecipientsDTO();
+            dto.setId(results.getInt("user_id"));
+            dto.setUsername(results.getString("username"));
+            recipients.add(dto);
+        }
+        return recipients;
+    }
+
 
     @Override
     public List<User> getUsers() {

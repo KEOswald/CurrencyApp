@@ -14,6 +14,10 @@ public interface TransferDao {
     Transfer getTransferById(int transferId);
 
     void deposit(int accountId, BigDecimal amount);
+
+    //void charge(int accountId, BigDecimal amount);
+
+
 }
 
 

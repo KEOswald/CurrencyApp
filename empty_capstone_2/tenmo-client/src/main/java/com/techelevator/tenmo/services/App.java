@@ -9,15 +9,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticatedUser currentUser;
-    private final ConsoleService consoleService = new ConsoleService();
+    private static final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
-    private AccountService accountService;  // No need to initialize here
+    private static AccountService accountService;  // No need to initialize here
     private final CurrencyService currencyService = new CurrencyService(API_BASE_URL);
 
     public static void main(String[] args) {
@@ -84,7 +86,7 @@ public class App {
             } else if (menuSelection == 4) {
                 makeDeposit();
             } else if (menuSelection == 5) {
-                sendBucks();
+                displayCurrencyDetails();
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -93,6 +95,7 @@ public class App {
             consoleService.pause();
         }
     }
+
 
     private void viewCurrentBalance() {
         if (currentUser != null) {
@@ -103,6 +106,10 @@ public class App {
                 System.out.println("Failed to get Balance");
             }
         }
+    }
+
+    private void displayCurrencyDetails() {
+        currencyService.displayCurrencyDetails();
     }
 
     private void displayCurrencies() {
@@ -148,6 +155,16 @@ public class App {
     }
 
     private void sendBucks() {
+        AccountService accountService = new AccountService(API_BASE_URL + "/account/transfer", currentUser);
+        accountService.sendBucks();
+    }
+
+}
+
+
+
+    /*
+    private void sendBucks() {
         if (currentUser != null) {
             // Assuming AuthenticatedUser contains a User object
             User user = currentUser.getUser();
@@ -168,4 +185,6 @@ public class App {
             System.out.println("User not authenticated.");
         }
     }
-}
+    /*
+     */
+

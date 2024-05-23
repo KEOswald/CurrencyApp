@@ -6,7 +6,10 @@ public class TransferDTO {
 
     private int accountFrom;
     private int accountTo;
+    private BigDecimal amount;
+    private BigDecimal fee;
 
+    // Getters and setters
     public int getAccountFrom() {
         return accountFrom;
     }
@@ -31,5 +34,11 @@ public class TransferDTO {
         this.amount = amount;
     }
 
-    private BigDecimal amount;
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
 }

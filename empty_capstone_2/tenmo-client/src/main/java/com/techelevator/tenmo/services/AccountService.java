@@ -52,9 +52,33 @@ public class AccountService {
         }
         return balance;
     }
+    public void sendBucks() {
+        Transfers transfer = new Transfers();
 
+        try {
+            // Set recipient ID to 2003
+            int recipientId = 2003;
+            transfer.setAccountTo(recipientId);
+
+            // Set accountFrom using the currentUser
+            int accountFrom = currentUser.getUser().getId();
+            transfer.setAccountFrom(accountFrom);
+
+            System.out.println("Enter the amount you would like to transfer");
+            Scanner scanner = new Scanner(System.in);
+            BigDecimal amount = new BigDecimal(Double.parseDouble(scanner.nextLine()));
+            transfer.setAmount(amount);
+
+            // Send transfer request
+            restTemplate.postForObject(API_BASE_URL + "account/transfers", transfer, Transfers.class);
+
+            System.out.println("Your transfer was successful");
+        } catch (Exception e) {
+            System.out.println("Transfer failed: " + e.getMessage());
+        }
+/*
     public void sendBucks(Principal principal) {
-        Scanner scanner = new Scanner(System.in);
+                Scanner scanner = new Scanner(System.in);
 
         try {
             if (principal == null) {
@@ -66,16 +90,22 @@ public class AccountService {
             currentUser.setUsername(principal.getName());
 
             int recipientId = 1006;  // User ID for the "Wallet"
-            int senderId = currentUser.getId();  // Assuming id is already set in the User object
+            int senderId = currentUser.getAccountId();
 
             System.out.println("Enter the amount you would like to transfer:");
             BigDecimal amount = new BigDecimal(scanner.nextLine());
 
-            // Here, you can directly call the transfer service or REST API
-            // with the senderId, recipientId, and amount for the transfer
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(AuthenticatedUser.getToken());
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-            // Example:
-            // transferService.transfer(senderId, recipientId, amount);
+            Deposits deposit = new Deposits();
+            deposit.setAccountId(senderId);
+            deposit.setAmount(amount);
+
+            HttpEntity<Deposits> entity = new HttpEntity<>(deposit, headers);
+            restTemplate.postForEntity(apiUrl + "account/transfer", entity, Void.class);
+
 
             System.out.println("Your transfer was successful");
         } catch (Exception e) {
@@ -83,7 +113,9 @@ public class AccountService {
             System.out.println("Transfer failed: " + e.getMessage());
         }
     }
-
+    /*
+ */
+    }
     public void depositMoney(BigDecimal amount) {
         Deposits deposit = new Deposits();
         deposit.setAccountId(currentUser.getUser().getId());

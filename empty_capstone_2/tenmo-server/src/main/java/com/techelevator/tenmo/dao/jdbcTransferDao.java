@@ -35,6 +35,9 @@ import java.util.List;
             int accountFromId = getaccountID(userFromId);
             int accountToId = getaccountID(userToId);
 
+          //  BigDecimal fee = calculateFee(amount);
+          //  charge(userFromId, fee);
+
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("transfer amount cannot be negative");
             }
@@ -60,6 +63,12 @@ import java.util.List;
             // get the created transfer details
             return getTransferById(transferId);
         }
+
+    private BigDecimal calculateFee(BigDecimal amount) {
+        // Define your fee calculation logic here (e.g., 1% of the amount)
+        return amount.multiply(BigDecimal.valueOf(0.01));
+    }
+
 
     @Override
     public void deposit(int userId, BigDecimal amount) {
@@ -96,7 +105,13 @@ import java.util.List;
 
     @Override
     public Transfer getTransferById(int transferId) {
-        return null;
+        String sql = "SELECT * FROM transfer WHERE transfer_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
+        if (results.next()) {
+            return mapRowToTransfer(results);
+        } else {
+            return null;
+        }
     }
 
     private Transfer mapRowToTransfer(SqlRowSet transferTrans) {

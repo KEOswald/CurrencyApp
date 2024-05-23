@@ -1,9 +1,7 @@
 package com.techelevator.tenmo.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.json.JSONObject;
 import com.techelevator.tenmo.model.CurrencyInfo;
 
