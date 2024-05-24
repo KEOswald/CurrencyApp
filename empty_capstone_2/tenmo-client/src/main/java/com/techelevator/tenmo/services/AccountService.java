@@ -1,9 +1,6 @@
 package com.techelevator.tenmo.services;
 
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.Deposits;
-import com.techelevator.tenmo.model.Transfers;
-import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
@@ -23,7 +20,7 @@ public class AccountService {
 
     private final String apiUrl;
 
-   private AuthenticatedUser currentUser;
+    private AuthenticatedUser currentUser;
 
 
     public AccountService(String apiUrl, AuthenticatedUser currentUser) {
@@ -52,12 +49,13 @@ public class AccountService {
         }
         return balance;
     }
+
     public void sendBucks() {
         Transfers transfer = new Transfers();
 
         try {
             // Set recipient ID to 2003
-            int recipientId = 2003;
+            int recipientId = 1004;
             transfer.setAccountTo(recipientId);
 
             // Set accountFrom using the currentUser
@@ -76,46 +74,27 @@ public class AccountService {
         } catch (Exception e) {
             System.out.println("Transfer failed: " + e.getMessage());
         }
-/*
-    public void sendBucks(Principal principal) {
-                Scanner scanner = new Scanner(System.in);
+    }
+    public void depositMoneyToWallet(BigDecimal amount) {
+        Deposits depositMoneyToWallet = new Deposits();
+        depositMoneyToWallet.setAccountId(currentUser.getUser().getId());
+        depositMoneyToWallet.setAmount(amount);
 
         try {
-            if (principal == null) {
-                throw new IllegalArgumentException("Principal not found");
-            }
-
-            // Create a User object using the username from the Principal
-            User currentUser = new User();
-            currentUser.setUsername(principal.getName());
-
-            int recipientId = 1006;  // User ID for the "Wallet"
-            int senderId = currentUser.getAccountId();
-
-            System.out.println("Enter the amount you would like to transfer:");
-            BigDecimal amount = new BigDecimal(scanner.nextLine());
-
             HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(AuthenticatedUser.getToken());
+            headers.setBearerAuth(currentUser.getToken());
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            Deposits deposit = new Deposits();
-            deposit.setAccountId(senderId);
-            deposit.setAmount(amount);
+            HttpEntity<Deposits> entity = new HttpEntity<>(depositMoneyToWallet, headers);
+            restTemplate.postForEntity(apiUrl + "account/wallet", entity, Void.class);
 
-            HttpEntity<Deposits> entity = new HttpEntity<>(deposit, headers);
-            restTemplate.postForEntity(apiUrl + "account/transfer", entity, Void.class);
-
-
-            System.out.println("Your transfer was successful");
-        } catch (Exception e) {
-            BasicLogger.log("Transfer failed: " + e.getMessage());
-            System.out.println("Transfer failed: " + e.getMessage());
+            System.out.println("Your deposit was successful");
+        } catch (RestClientException e) {
+            BasicLogger.log("Deposit failed: " + e.getMessage());
+            System.out.println("Deposit failed: " + e.getMessage());
         }
     }
-    /*
- */
-    }
+
     public void depositMoney(BigDecimal amount) {
         Deposits deposit = new Deposits();
         deposit.setAccountId(currentUser.getUser().getId());
@@ -133,6 +112,28 @@ public class AccountService {
         } catch (RestClientException e) {
             BasicLogger.log("Deposit failed: " + e.getMessage());
             System.out.println("Deposit failed: " + e.getMessage());
+        }
+    }
+
+
+    public void withdrawMoney(BigDecimal amount) {
+        Withdraws withdraws = new Withdraws();
+        withdraws.setAccountId(currentUser.getUser().getId());
+        withdraws.setAmount(amount);
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(currentUser.getToken());
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Withdraws> entity = new HttpEntity<>(withdraws, headers);
+            restTemplate.postForEntity(apiUrl + "account/withdraw", entity, Void.class);
+
+            System.out.println();
+            System.out.println("Your withdraw was successful, converted money has been dispensed");
+        } catch (RestClientException e) {
+            BasicLogger.log("Withdraw failed: " + e.getMessage());
+            System.out.println("Withdraw failed: " + e.getMessage());
         }
     }
 

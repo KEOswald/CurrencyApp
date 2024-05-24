@@ -96,6 +96,21 @@ public class AccountController {
         return transferDao.getTransferById(id);
     }
 
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/account/wallet", method = RequestMethod.POST)
+    public void walletDeposit(@RequestBody DepositDTO depositDTO, Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("Principal not found");
+        }
+
+        User getUser = userDao.getUserByUsername(principal.getName());
+        if (getUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        int userId = getUser.getId();
+        transferDao.walletDeposit(userId, depositDTO.getAmount());
+    }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/account/deposit", method = RequestMethod.POST)
@@ -111,6 +126,22 @@ public class AccountController {
 
         int userId = getUser.getId();
         transferDao.deposit(userId, depositDTO.getAmount());
+    }
+
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/account/withdraw", method = RequestMethod.POST)
+    public void withdraw(@RequestBody WithdrawDTO withdrawDTO, Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("Principal not found");
+        }
+
+        User getUser = userDao.getUserByUsername(principal.getName());
+        if (getUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        int userId = getUser.getId();
+        transferDao.withdraw(userId, withdrawDTO.getAmount());
     }
 
 }

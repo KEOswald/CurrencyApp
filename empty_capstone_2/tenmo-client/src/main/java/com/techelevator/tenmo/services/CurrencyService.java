@@ -1,11 +1,8 @@
 package com.techelevator.tenmo.services;
 
+import java.math.BigDecimal;
 import java.util.*;
 
-import org.json.JSONObject;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -14,15 +11,18 @@ import java.util.stream.Collectors;
 
 public class CurrencyService {
     private Scanner scanner;
+
     private final String baseUrl;
     private static final String BASE_CURRENCY_CODE = "USD"; // Base currency code
     private static final double BASE_CURRENCY_RATE = 1.0;
+
 
 
     public CurrencyService(String baseUrl) {
         this.baseUrl = baseUrl;
         this.scanner = new Scanner(System.in);
     }
+
 
     public void displayAllCurrencies() {
         RestTemplate restTemplate = new RestTemplate();
@@ -98,8 +98,20 @@ public class CurrencyService {
         }
     }
 
-    public void displayCurrencyDetails() {
+    public void setAmountToWithdraw(double amount) {
+        this.amountToWithdraw = amount;
+    }
+
+    public double getAmountToWithdraw() {
+        return amountToWithdraw;
+    }
+
+    String codeForExchange;
+
+    public String CurrencyDetails() {
         RestTemplate restTemplate = new RestTemplate();
+        Scanner scanner = new Scanner(System.in);
+
         try {
             // Fetch currency data from the REST API
             Map<String, List<Map<String, Object>>> currencies = restTemplate.getForObject(baseUrl + "/currencies", Map.class);
@@ -112,13 +124,171 @@ public class CurrencyService {
                         .collect(Collectors.toList());
 
                 // Prompt the user to select a currency code
-                System.out.println("Please enter a currency code to display details:");
-                Scanner scanner = new Scanner(System.in);
+                System.out.println();
+                System.out.println("Please enter a currency code to display details for Exchange:");
+                String currencyCode = scanner.nextLine().toUpperCase(); // Convert input to uppercase for consistency
+                codeForExchange = currencyCode;
+
+                // Check if the entered currency code exists in the map
+                boolean found = false;
+                for (List<Map<String, Object>> currencyList : currencies.values()) {
+                    for (Map<String, Object> currencyInfo : currencyList) {
+                        if (currencyInfo.get("code").equals(currencyCode)) {
+                            found = true;
+                            System.out.println("Details for currency code " + currencyCode + ":");
+                            System.out.println("Name: " + currencyInfo.get("name"));
+                            System.out.println("Value: " + currencyInfo.get("value"));
+                            System.out.println();
+                            break;
+                        }
+                    }
+                    if (found) {
+                        break;
+                    }
+                }
+                if (!found) {
+                    System.out.println("Currency code not found.");
+                }
+            } else {
+                System.out.println("No currency data available.");
+            }
+            makeExchange();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return codeForExchange;
+    }
+
+
+    private double amountToWithdraw;
+
+    public double getFeeAmount() {
+        return feeAmount;
+    }
+
+    public void setFeeAmount(double feeAmount) {
+        this.feeAmount = feeAmount;
+    }
+
+    private double feeAmount;
+
+    public double[] makeExchange() {
+        RestTemplate restTemplate = new RestTemplate();
+        Scanner scanner = new Scanner(System.in);
+        try {
+            // Fetch currency data from the REST API
+            Map<String, List<Map<String, Object>>> currencies = restTemplate.getForObject(baseUrl + "/currencies", Map.class);
+
+            // Prompt the user to enter the amount to convert
+            double amountUSD = 0;
+            while (true) {
+                System.out.println("Please enter the amount in USD to convert:");
+                String input = scanner.nextLine();
+                try {
+                    amountUSD = Double.parseDouble(input);
+                    if (amountUSD < 0) {
+                        System.out.println("Amount must be non-negative. Please try again.");
+                    } else {
+                        break; // valid input
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                }
+            }
+
+            // Check if the entered currency code exists in the map
+            boolean found = false;
+            for (List<Map<String, Object>> currencyList : currencies.values()) {
+                for (Map<String, Object> currencyInfo : currencyList) {
+                    if (currencyInfo.get("code").equals(codeForExchange)) {
+                        found = true;
+
+                        // Perform the conversion
+                        double currencyValue = (double) currencyInfo.get("value");
+
+                        // Calculate the fee (7%)
+                        double fee = amountUSD * 0.03;
+
+                        // Subtract the fee from the original amount
+                        double amountAfterFee = amountUSD - fee;
+
+                        // Perform the conversion with the amount minus the fee
+                        double convertedAmount = amountAfterFee * currencyValue;
+
+                        // Round the conversion result to two decimal points
+                        String roundedConvertedAmount = String.format("%.2f", convertedAmount);
+
+                        // Display the conversion result including the fee
+                        System.out.println();
+                        System.out.println(amountUSD + " USD will be exchanged to " + roundedConvertedAmount + " " + codeForExchange + " including a 3% fee.");
+                        System.out.println();
+                        // Ask for confirmation
+                        System.out.println("Do you want to proceed with the conversion? (yes/no)");
+                        String confirmation = scanner.nextLine().toLowerCase();
+                        if (!confirmation.equals("yes")) {
+                            System.out.println("Conversion canceled.");
+                            return new double[]{0, 0}; // Return zeros to indicate cancellation
+                        }
+
+                        // Store the amount to withdraw and the fee
+                        amountToWithdraw = convertedAmount;
+                        feeAmount = fee;
+
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("Invalid currency code.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Return both the amount to withdraw and the fee
+        return new double[]{amountToWithdraw, feeAmount};
+    }
+
+
+
+
+    public double displayCurrencyDetails() {
+        RestTemplate restTemplate = new RestTemplate();
+        double amountUSD = 0;
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            // Fetch currency data from the REST API
+            Map<String, List<Map<String, Object>>> currencies = restTemplate.getForObject(baseUrl + "/currencies", Map.class);
+
+            // Display currency data
+            if (currencies != null) {
+                // Sort the currencies by region alphabetically
+                List<Map.Entry<String, List<Map<String, Object>>>> sortedCurrencies = currencies.entrySet().stream()
+                        .sorted(Comparator.comparing(Map.Entry::getKey))
+                        .collect(Collectors.toList());
+
+                // Prompt the user to select a currency code
+                System.out.println("Please enter a currency code to display details & convert:");
                 String currencyCode = scanner.nextLine().toUpperCase(); // Convert input to uppercase for consistency
 
                 // Prompt the user to enter the amount to convert
-                System.out.println("Please enter the amount in USD to convert:");
-                double amountUSD = scanner.nextDouble();
+                while (true) {
+                    System.out.println("Please enter the amount in USD to convert:");
+                    String input = scanner.nextLine();
+                    try {
+                        amountUSD = Double.parseDouble(input);
+                        if (amountUSD < 0) {
+                            System.out.println("Amount must be non-negative. Please try again.");
+                        } else {
+                            break; // valid input
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a valid number.");
+                    }
+                }
 
                 // Check if the entered currency code exists in the map
                 boolean found = false;
@@ -141,6 +311,9 @@ public class CurrencyService {
                             // Display the conversion result
                             System.out.println(amountUSD + " USD is equivalent to " + roundedConvertedAmount + " " + currencyCode);
 
+                            // Store the amount to withdraw
+                            setAmountToWithdraw(convertedAmount);
+
                             break;
                         }
                     }
@@ -157,13 +330,6 @@ public class CurrencyService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private double getConversionRate(String currencyCode) {
-        // You may hardcode conversion rates if needed or fetch from an API
-        // For simplicity, you can directly return 1.0 since USD is the base currency
-        return 1.0;
+      return 0;
     }
 }
-
-

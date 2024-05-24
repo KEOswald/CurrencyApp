@@ -24,6 +24,10 @@ public class ConsoleService {
     public void printGreeting() {
         System.out.println("*********************");
         System.out.println("* Welcome to the Currency Exchange! *");
+        System.out.println();
+        System.out.println("* Exchange USD for Foreign Currency *");
+        System.out.println();
+        System.out.println("* Create an Account and Deposit USD to get started *");
         System.out.println("*********************");
     }
 
@@ -41,7 +45,7 @@ public class ConsoleService {
         System.out.println("2: View currency by region");
         System.out.println("3: View Current Account Balance");
         System.out.println("4: Deposit Into Your Account");
-        System.out.println("5: Exchange Test");
+        System.out.println("5: Make an Exchange");
         System.out.println("0: Exit");
         System.out.println();
     }

@@ -86,7 +86,7 @@ public class App {
             } else if (menuSelection == 4) {
                 makeDeposit();
             } else if (menuSelection == 5) {
-                displayCurrencyDetails();
+                CurrencyDetails();
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -108,8 +108,39 @@ public class App {
         }
     }
 
+    private void CurrencyDetails() {
+        currencyService.CurrencyDetails();
+        double amountToWithdraw = currencyService.getAmountToWithdraw();
+        double amountToDeposit = currencyService.getFeeAmount();
+
+        // Proceed with withdrawal if a valid amount was returned
+        if (amountToWithdraw > 0) {
+            BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
+            BigDecimal feeAmount = BigDecimal.valueOf(amountToDeposit);
+            accountService.withdrawMoney(amount);
+            accountService.depositMoneyToWallet(feeAmount);
+
+
+            double balance = accountService.getCurrentUserBalance();
+            System.out.println("Current balance: $" + balance);
+        }
+    }
+
     private void displayCurrencyDetails() {
+        // Display currency details
         currencyService.displayCurrencyDetails();
+
+        // Get the amount to withdraw from CurrencyService
+        double amountToWithdraw = currencyService.getAmountToWithdraw();
+
+        // Proceed with withdrawal if a valid amount was returned
+        if (amountToWithdraw > 0) {
+            BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
+            accountService.withdrawMoney(amount);
+
+            double balance = accountService.getCurrentUserBalance();
+            System.out.println("Current balance: $" + balance);
+        }
     }
 
     private void displayCurrencies() {
@@ -145,13 +176,46 @@ public class App {
         }
     }
 
-    private void makeDeposit() {
-        BigDecimal amount = new BigDecimal(consoleService.promptForString("Enter the amount you would like to deposit: "));
-        accountService.depositMoney(amount);
+    private void makeWithdraw() {
+        // Retrieve the stored amount to withdraw from CurrencyService
+        double amountToWithdraw = currencyService.getAmountToWithdraw();
+        BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
 
-        // Fetch and display updated balance
+        // Proceed with withdrawal
+        accountService.withdrawMoney(amount);
+
         double balance = accountService.getCurrentUserBalance();
-        System.out.println("Current balance : $" + balance);
+        System.out.println("Current balance: $" + balance);
+    }
+
+    private void makeDeposit() {
+        try {
+            BigDecimal amount = new BigDecimal(consoleService.promptForString("Enter the amount you would like to deposit: "));
+
+            // Validate if the amount exceeds 500
+            BigDecimal maxDepositAmount = new BigDecimal("500");
+            if (amount.compareTo(maxDepositAmount) > 0) {
+                System.out.println("Deposit amount cannot exceed $500");
+                return;
+            }
+
+            // Validate if the amount is negative
+            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                System.out.println("Deposit amount cannot be negative");
+                return;
+            }
+
+            // Proceed with the deposit
+            accountService.depositMoney(amount);
+
+            // Fetch and display updated balance
+            double balance = accountService.getCurrentUserBalance();
+            System.out.println("Current balance: $" + balance);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid amount. Please enter a valid number");
+        } catch (Exception e) {
+            System.out.println("Deposit failed: " + e.getMessage());
+        }
     }
 
     private void sendBucks() {
@@ -161,30 +225,4 @@ public class App {
 
 }
 
-
-
-    /*
-    private void sendBucks() {
-        if (currentUser != null) {
-            // Assuming AuthenticatedUser contains a User object
-            User user = currentUser.getUser();
-            if (user != null) {
-                // Create a Principal object using the username from the User object
-                Principal principal = new Principal() {
-                    @Override
-                    public String getName() {
-                        return user.getUsername();
-                    }
-                };
-                // Call sendBucks() method in accountService with the Principal object
-                accountService.sendBucks(principal);
-            } else {
-                System.out.println("User information not available.");
-            }
-        } else {
-            System.out.println("User not authenticated.");
-        }
-    }
-    /*
-     */
 

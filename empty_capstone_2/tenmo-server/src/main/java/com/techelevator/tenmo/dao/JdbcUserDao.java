@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 public class JdbcUserDao implements UserDao {
 
-    private static final BigDecimal STARTING_BALANCE = new BigDecimal("100.00");
+    private static final BigDecimal STARTING_BALANCE = new BigDecimal("0.00");
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcUserDao(JdbcTemplate jdbcTemplate) {

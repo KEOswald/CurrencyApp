@@ -15,6 +15,10 @@ public interface TransferDao {
 
     void deposit(int accountId, BigDecimal amount);
 
+    void withdraw(int accountId, BigDecimal amount);
+
+    void walletDeposit(int accountId, BigDecimal amount);
+
     //void charge(int accountId, BigDecimal amount);
 
 
