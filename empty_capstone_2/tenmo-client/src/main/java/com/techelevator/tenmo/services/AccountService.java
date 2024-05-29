@@ -5,10 +5,7 @@ import com.techelevator.util.BasicLogger;
 import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.Scanner;
 
 
@@ -88,7 +85,7 @@ public class AccountService {
             HttpEntity<Deposits> entity = new HttpEntity<>(depositMoneyToWallet, headers);
             restTemplate.postForEntity(apiUrl + "account/wallet", entity, Void.class);
 
-            System.out.println("Your deposit was successful");
+
         } catch (RestClientException e) {
             BasicLogger.log("Deposit failed: " + e.getMessage());
             System.out.println("Deposit failed: " + e.getMessage());
@@ -108,6 +105,7 @@ public class AccountService {
             HttpEntity<Deposits> entity = new HttpEntity<>(deposit, headers);
             restTemplate.postForEntity(apiUrl + "account/deposit", entity, Void.class);
 
+            System.out.println();
             System.out.println("Your deposit was successful");
         } catch (RestClientException e) {
             BasicLogger.log("Deposit failed: " + e.getMessage());
@@ -130,11 +128,36 @@ public class AccountService {
             restTemplate.postForEntity(apiUrl + "account/withdraw", entity, Void.class);
 
             System.out.println();
-            System.out.println("Your withdraw was successful, converted money has been dispensed");
+            System.out.println("Your Exchange was successful, converted money has been dispensed");
+            System.out.println();
         } catch (RestClientException e) {
             BasicLogger.log("Withdraw failed: " + e.getMessage());
-            System.out.println("Withdraw failed: " + e.getMessage());
+            System.out.println("Withdraw failed - ACCOUNT SERVICE");
         }
     }
+
+    //connected to cashout in accountcontroller
+    public void withdrawAllMoney(BigDecimal amount) {
+        Withdraws withdraws = new Withdraws();
+        withdraws.setAccountId(currentUser.getUser().getId());
+        withdraws.setAmount(amount);
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(currentUser.getToken());
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Withdraws> entity = new HttpEntity<>(withdraws, headers);
+            restTemplate.postForEntity(apiUrl + "account/cashout", entity, Void.class);
+
+            System.out.println();
+            System.out.println("Your withdraw was successful, dont forget your change!");
+        } catch (RestClientException e) {
+            BasicLogger.log("Withdraw failed: " + e.getMessage());
+
+        }
+    }
+
+
 
 }

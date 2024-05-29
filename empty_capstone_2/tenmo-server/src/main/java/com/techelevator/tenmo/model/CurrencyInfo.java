@@ -50,6 +50,11 @@ public class CurrencyInfo {
             case "RSD":
             case "TRY":
             case "UAH":
+            case "BGN":
+            case "CZK":
+            case "HUF":
+            case "BYN":
+            case "BAM":
                 return "Europe";
 
             // North America
@@ -86,6 +91,12 @@ public class CurrencyInfo {
             case "AZN":
             case "PHP":
             case "IDR":
+            case "KPW":
+            case "MRU":
+            case "KZT":
+            case "TMT":
+            case "VND":
+            case "BND":
                 return "Asia";
 
             // Oceania
@@ -96,6 +107,7 @@ public class CurrencyInfo {
             case "SBD":
             case "TOP":
             case "VUV":
+            case "WST":
                 return "Oceania";
 
             // Africa
@@ -135,7 +147,13 @@ public class CurrencyInfo {
             case "CDF":
             case "STN":
             case "SDG":
-
+            case "SSP":
+            case "ERN":
+            case "ETB":
+            case "GHS":
+            case "ZQL":
+            case "MZN":
+            case "BWP":
                 return "Africa";
 
             // South America
@@ -151,6 +169,8 @@ public class CurrencyInfo {
             case "GUY":
             case "FKP":
             case "VES":
+            case "CLF":
+            case "SVC":
                 return "South America";
 
             // Caribbean
@@ -162,6 +182,12 @@ public class CurrencyInfo {
             case "BSD":
             case"CUP":
             case "DOP":
+            case "BMD":
+            case "PAB":
+            case "HTG":
+            case "ANG":
+            case "AWG":
+            case "KYD":
                 return "Caribbean";
 
             // Middle East
@@ -178,6 +204,9 @@ public class CurrencyInfo {
             case "OMR":
             case "QAR":
             case "SYP":
+            case "AFN":
+            case "YER":
+            case "AMD":
                 return "Middle East";
 
             // Central America
@@ -187,15 +216,27 @@ public class CurrencyInfo {
             case "NIO":
                 return "Central America";
 
+            //Crypto and Commodity
             case "BTC":
             case "XAG":
             case "XAU":
             case "XPT":
+            case "XPD":
+            case "XPF":
+            case "XDR":
                 return "Crypto & Commodity";
+
+            //Other
+            case "CNH":
+            case "JEP":
+            case "IMP":
+            case "GGP":
+            case "GIP":
+                return "Other";
 
             // Default case
             default:
-                return "Unknown";
+                return "Misc";
         }
     }
 }

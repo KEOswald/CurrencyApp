@@ -242,6 +242,49 @@ public class CurrencyMapper {
         CURRENCY_NAMES.put("XAU", "Gold (troy ounce)");
         CURRENCY_NAMES.put("XPT", "Platinum (troy ounce)");
         // Add more mappings for other currencies as needed
+
+        //Misc corrections on Bug
+        CURRENCY_NAMES.put("CNH", "Chinese Yuan (Offshore)");
+        CURRENCY_NAMES.put("ERN", "Eritrean Nakfa");
+        CURRENCY_NAMES.put("MZN", "Mozambican Metical");
+        CURRENCY_NAMES.put("SVC", "Salvadoran Colón");
+        CURRENCY_NAMES.put("XPD", "Palladium Ounce");
+        CURRENCY_NAMES.put("XPF", "CFP Franc");
+        CURRENCY_NAMES.put("MRU", "Mauritanian Ouguiya");
+        CURRENCY_NAMES.put("BMD", "Bermudian Dollar");
+        CURRENCY_NAMES.put("PAB", "Panamanian Balboa");
+        CURRENCY_NAMES.put("GGP", "Guernsey Pound");
+        CURRENCY_NAMES.put("ETB", "Ethiopian Birr");
+        CURRENCY_NAMES.put("JEP", "Jersey Pound");
+        CURRENCY_NAMES.put("BND", "Brunei Dollar");
+        CURRENCY_NAMES.put("VND", "Vietnamese Dong");
+        CURRENCY_NAMES.put("GHS", "Ghanaian Cedi");
+        CURRENCY_NAMES.put("GYD", "Guyanese Dollar");
+        CURRENCY_NAMES.put("KPW", "North Korean Won");
+        CURRENCY_NAMES.put("KYD", "Cayman Islands Dollar");
+        CURRENCY_NAMES.put("AMD", "Armenian Dram");
+        CURRENCY_NAMES.put("BWP", "Botswana Pula");
+        CURRENCY_NAMES.put("BGN", "Bulgarian Lev");
+        CURRENCY_NAMES.put("IMP", "Isle of Man Pound");
+        CURRENCY_NAMES.put("ZWL", "Zimbabwean Dollar");
+        CURRENCY_NAMES.put("GIP", "Gibraltar Pound");
+        CURRENCY_NAMES.put("CZK", "Czech Koruna");
+        CURRENCY_NAMES.put("ANG", "Netherlands Antillean Guilder");
+        CURRENCY_NAMES.put("HTG", "Haitian Gourde");
+        CURRENCY_NAMES.put("KZT", "Kazakhstani Tenge");
+        CURRENCY_NAMES.put("YER", "Yemeni Rial");
+        CURRENCY_NAMES.put("AFN", "Afghan Afghani");
+        CURRENCY_NAMES.put("AWG", "Aruban Florin");
+        CURRENCY_NAMES.put("BYN", "Belarusian Ruble");
+        CURRENCY_NAMES.put("HUF", "Hungarian Forint");
+        CURRENCY_NAMES.put("XDR", "Special Drawing Rights");
+        CURRENCY_NAMES.put("BZD", "Belize Dollar");
+        CURRENCY_NAMES.put("BAM", "Bosnia-Herzegovina Convertible Mark");
+        CURRENCY_NAMES.put("SSP", "South Sudanese Pound");
+        CURRENCY_NAMES.put("PEN", "Peruvian Sol");
+        CURRENCY_NAMES.put("WST", "Samoan Tala");
+        CURRENCY_NAMES.put("TMT", "Turkmenistani Manat");
+        CURRENCY_NAMES.put("CLF", "Chilean Unit of Account (UF)");
     }
 
 }

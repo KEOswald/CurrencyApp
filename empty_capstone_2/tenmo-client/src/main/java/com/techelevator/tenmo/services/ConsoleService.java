@@ -46,6 +46,7 @@ public class ConsoleService {
         System.out.println("3: View Current Account Balance");
         System.out.println("4: Deposit Into Your Account");
         System.out.println("5: Make an Exchange");
+        System.out.println("6: Change & Receipt");
         System.out.println("0: Exit");
         System.out.println();
     }

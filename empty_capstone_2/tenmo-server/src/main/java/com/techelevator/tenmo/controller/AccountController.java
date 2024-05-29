@@ -144,4 +144,22 @@ public class AccountController {
         transferDao.withdraw(userId, withdrawDTO.getAmount());
     }
 
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/account/cashout", method = RequestMethod.POST)
+    public void cashOut(@RequestBody WithdrawDTO withdrawDTO, Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("Principal not found");
+        }
+
+        User getUser = userDao.getUserByUsername(principal.getName());
+        if (getUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        int userId = getUser.getId();
+        transferDao.withdraw(userId, withdrawDTO.getAmount());
+    }
+
+
+
 }

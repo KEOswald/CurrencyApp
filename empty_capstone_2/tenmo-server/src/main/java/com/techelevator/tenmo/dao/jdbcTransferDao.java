@@ -64,6 +64,27 @@ import java.util.List;
     }
 
     @Override
+    public void cashOut(int userId) {
+        // Fetch the account ID associated with the user ID
+        int accountId = getAccountIdByUserId(userId);
+        if (accountId == 0) {
+            throw new IllegalArgumentException("Account not found for user ID: " + userId);
+        }
+
+        // Fetch the current balance of the account
+        BigDecimal currentBalance = getbalance(accountId);
+
+        // Check if the account has a positive balance
+        if (currentBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("No funds available for cash out");
+        }
+
+        // Update the account balance to zero
+        String sqlUpdateBalance = "UPDATE account SET balance = 0 WHERE account_id = ?";
+        jdbcTemplate.update(sqlUpdateBalance, accountId);
+    }
+
+    @Override
     public void withdraw(int userId, BigDecimal amount) {
         // Check if the withdrawal amount is negative or zero
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {

@@ -148,6 +148,7 @@ public class CurrencyService {
                 }
                 if (!found) {
                     System.out.println("Currency code not found.");
+
                 }
             } else {
                 System.out.println("No currency data available.");
@@ -159,9 +160,6 @@ public class CurrencyService {
         return codeForExchange;
     }
 
-
-    private double amountToWithdraw;
-
     public double getFeeAmount() {
         return feeAmount;
     }
@@ -171,6 +169,18 @@ public class CurrencyService {
     }
 
     private double feeAmount;
+    private double amountToWithdraw;
+
+    private List<String> convertedAmountTranscript = new ArrayList<>();
+
+    public String getConvertedAmountTranscript() {
+        if (convertedAmountTranscript.isEmpty()) {
+            return "No Exchange";
+        } else {
+            // Join all entries with a newline character
+            return String.join("\n", convertedAmountTranscript);
+        }
+    }
 
     public double[] makeExchange() {
         RestTemplate restTemplate = new RestTemplate();
@@ -205,8 +215,9 @@ public class CurrencyService {
 
                         // Perform the conversion
                         double currencyValue = (double) currencyInfo.get("value");
+                        String currencyName = (String) currencyInfo.get("name");
 
-                        // Calculate the fee (7%)
+                        // Calculate the fee (3%)
                         double fee = amountUSD * 0.03;
 
                         // Subtract the fee from the original amount
@@ -222,17 +233,20 @@ public class CurrencyService {
                         System.out.println();
                         System.out.println(amountUSD + " USD will be exchanged to " + roundedConvertedAmount + " " + codeForExchange + " including a 3% fee.");
                         System.out.println();
+
                         // Ask for confirmation
                         System.out.println("Do you want to proceed with the conversion? (yes/no)");
                         String confirmation = scanner.nextLine().toLowerCase();
                         if (!confirmation.equals("yes")) {
                             System.out.println("Conversion canceled.");
-                            return new double[]{0, 0}; // Return zeros to indicate cancellation
+                            return new double[]{0, 0, 0}; // Return zeros to indicate cancellation
                         }
 
                         // Store the amount to withdraw and the fee
-                        amountToWithdraw = convertedAmount;
+                        String transactionDetails = "Currency Name: " + currencyName + ", Converted Amount: " + roundedConvertedAmount;
+                        convertedAmountTranscript.add(transactionDetails);
                         feeAmount = fee;
+                        amountToWithdraw = amountUSD;
 
                         break;
                     }
@@ -247,11 +261,9 @@ public class CurrencyService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // Return both the amount to withdraw and the fee
-        return new double[]{amountToWithdraw, feeAmount};
+        // Return only the numeric values
+        return new double[]{amountToWithdraw, feeAmount, 0}; // 0 for convertedAmountTranscript as it's now a list of strings
     }
-
-
 
 
     public double displayCurrencyDetails() {
@@ -274,21 +286,6 @@ public class CurrencyService {
                 System.out.println("Please enter a currency code to display details & convert:");
                 String currencyCode = scanner.nextLine().toUpperCase(); // Convert input to uppercase for consistency
 
-                // Prompt the user to enter the amount to convert
-                while (true) {
-                    System.out.println("Please enter the amount in USD to convert:");
-                    String input = scanner.nextLine();
-                    try {
-                        amountUSD = Double.parseDouble(input);
-                        if (amountUSD < 0) {
-                            System.out.println("Amount must be non-negative. Please try again.");
-                        } else {
-                            break; // valid input
-                        }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Invalid input. Please enter a valid number.");
-                    }
-                }
 
                 // Check if the entered currency code exists in the map
                 boolean found = false;

@@ -87,6 +87,8 @@ public class App {
                 makeDeposit();
             } else if (menuSelection == 5) {
                 CurrencyDetails();
+            } else if (menuSelection == 6) {
+                makeAllWithdraw();
             } else if (menuSelection == 0) {
                 continue;
             } else {
@@ -158,7 +160,8 @@ public class App {
         regionOptions.put(7, "Middle East");
         regionOptions.put(8, "Central America");
         regionOptions.put(9, "Crypto & Commodity");
-        regionOptions.put(10, "Unknown");
+        regionOptions.put(10, "Other");
+
 
         System.out.println("Select a region:");
 
@@ -175,6 +178,19 @@ public class App {
             System.out.println("Invalid choice.");
         }
     }
+
+    private void makeAllWithdraw() {
+        double amountToWithdraw = accountService.getCurrentUserBalance();
+        BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
+        // Print current balance as change
+        System.out.println();
+        System.out.println("Your change in USD will be $" + accountService.getCurrentUserBalance());
+        System.out.println("You Exchanged: " + currencyService.getConvertedAmountTranscript());
+        //do the actual withdrawl
+        accountService.withdrawAllMoney(amount);
+
+        double balance = accountService.getCurrentUserBalance();
+       }
 
     private void makeWithdraw() {
         // Retrieve the stored amount to withdraw from CurrencyService
@@ -195,12 +211,14 @@ public class App {
             // Validate if the amount exceeds 500
             BigDecimal maxDepositAmount = new BigDecimal("500");
             if (amount.compareTo(maxDepositAmount) > 0) {
+                System.out.println();
                 System.out.println("Deposit amount cannot exceed $500");
                 return;
             }
 
             // Validate if the amount is negative
             if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                System.out.println();
                 System.out.println("Deposit amount cannot be negative");
                 return;
             }
