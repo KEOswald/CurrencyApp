@@ -1,17 +1,10 @@
 package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 public class App {
 
@@ -110,6 +103,7 @@ public class App {
         }
     }
 
+    boolean isBalanceValid = true;
     private void CurrencyDetails() {
         currencyService.CurrencyDetails();
         double amountToWithdraw = currencyService.getAmountToWithdraw();
@@ -119,7 +113,16 @@ public class App {
         if (amountToWithdraw > 0) {
             BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
             BigDecimal feeAmount = BigDecimal.valueOf(amountToDeposit);
-            accountService.withdrawMoney(amount);
+            try {
+                accountService.withdrawMoney(amount);
+
+            } catch (Exception e) {
+                isBalanceValid = false;
+                System.out.println(e.getMessage());
+            }
+            if (isBalanceValid) {
+                currencyService.addDetails();
+            }
             accountService.depositMoneyToWallet(feeAmount);
 
 
@@ -128,22 +131,6 @@ public class App {
         }
     }
 
-    private void displayCurrencyDetails() {
-        // Display currency details
-        currencyService.displayCurrencyDetails();
-
-        // Get the amount to withdraw from CurrencyService
-        double amountToWithdraw = currencyService.getAmountToWithdraw();
-
-        // Proceed with withdrawal if a valid amount was returned
-        if (amountToWithdraw > 0) {
-            BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
-            accountService.withdrawMoney(amount);
-
-            double balance = accountService.getCurrentUserBalance();
-            System.out.println("Current balance: $" + balance);
-        }
-    }
 
     private void displayCurrencies() {
         currencyService.displayAllCurrencies(); // Call the displayAllCurrencies method from CurrencyService
@@ -185,8 +172,8 @@ public class App {
         // Print current balance as change
         System.out.println();
         System.out.println("Your change in USD will be $" + accountService.getCurrentUserBalance());
-        System.out.println("You Exchanged: " + currencyService.getConvertedAmountTranscript());
-        //do the actual withdrawl
+        System.out.println("You Exchanged:\n" + currencyService.getConvertedAmountTranscript());
+        //do the actual withdrawal
         accountService.withdrawAllMoney(amount);
 
         double balance = accountService.getCurrentUserBalance();
@@ -198,7 +185,7 @@ public class App {
         BigDecimal amount = BigDecimal.valueOf(amountToWithdraw);
 
         // Proceed with withdrawal
-        accountService.withdrawMoney(amount);
+       // accountService.withdrawMoney(amount);
 
         double balance = accountService.getCurrentUserBalance();
         System.out.println("Current balance: $" + balance);
@@ -236,10 +223,6 @@ public class App {
         }
     }
 
-    private void sendBucks() {
-        AccountService accountService = new AccountService(API_BASE_URL + "/account/transfer", currentUser);
-        accountService.sendBucks();
-    }
 
 }
 

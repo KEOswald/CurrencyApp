@@ -7,12 +7,6 @@ import java.util.List;
 
 public interface TransferDao {
 
-    Transfer createTransfer(int userFromId, int userToId, BigDecimal amount);
-
-    List<Transfer> getTransfersByUserId(int userId);
-
-    Transfer getTransferById(int transferId);
-
     void deposit(int accountId, BigDecimal amount);
 
     void cashOut(int userId);
@@ -21,7 +15,7 @@ public interface TransferDao {
 
     void walletDeposit(int accountId, BigDecimal amount);
 
-    //void charge(int accountId, BigDecimal amount);
+
 
 
 }

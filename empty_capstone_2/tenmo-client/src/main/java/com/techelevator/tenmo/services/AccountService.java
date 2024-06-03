@@ -6,7 +6,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
-import java.util.Scanner;
+
 
 
 public class AccountService {
@@ -47,31 +47,6 @@ public class AccountService {
         return balance;
     }
 
-    public void sendBucks() {
-        Transfers transfer = new Transfers();
-
-        try {
-            // Set recipient ID to 2003
-            int recipientId = 1004;
-            transfer.setAccountTo(recipientId);
-
-            // Set accountFrom using the currentUser
-            int accountFrom = currentUser.getUser().getId();
-            transfer.setAccountFrom(accountFrom);
-
-            System.out.println("Enter the amount you would like to transfer");
-            Scanner scanner = new Scanner(System.in);
-            BigDecimal amount = new BigDecimal(Double.parseDouble(scanner.nextLine()));
-            transfer.setAmount(amount);
-
-            // Send transfer request
-            restTemplate.postForObject(API_BASE_URL + "account/transfers", transfer, Transfers.class);
-
-            System.out.println("Your transfer was successful");
-        } catch (Exception e) {
-            System.out.println("Transfer failed: " + e.getMessage());
-        }
-    }
     public void depositMoneyToWallet(BigDecimal amount) {
         Deposits depositMoneyToWallet = new Deposits();
         depositMoneyToWallet.setAccountId(currentUser.getUser().getId());
@@ -114,7 +89,7 @@ public class AccountService {
     }
 
 
-    public void withdrawMoney(BigDecimal amount) {
+    public void withdrawMoney(BigDecimal amount) throws Exception {
         Withdraws withdraws = new Withdraws();
         withdraws.setAccountId(currentUser.getUser().getId());
         withdraws.setAmount(amount);
@@ -132,7 +107,8 @@ public class AccountService {
             System.out.println();
         } catch (RestClientException e) {
             BasicLogger.log("Withdraw failed: " + e.getMessage());
-            System.out.println("Withdraw failed - ACCOUNT SERVICE");
+            System.out.println();
+            throw new Exception("Withdraw Cancelled! Insufficient Funds!");
         }
     }
 

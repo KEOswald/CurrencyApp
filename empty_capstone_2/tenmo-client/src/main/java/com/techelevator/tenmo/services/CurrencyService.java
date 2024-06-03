@@ -1,10 +1,8 @@
 package com.techelevator.tenmo.services;
 
-import java.math.BigDecimal;
+
 import java.util.*;
-
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,10 +11,6 @@ public class CurrencyService {
     private Scanner scanner;
 
     private final String baseUrl;
-    private static final String BASE_CURRENCY_CODE = "USD"; // Base currency code
-    private static final double BASE_CURRENCY_RATE = 1.0;
-
-
 
     public CurrencyService(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -107,6 +101,7 @@ public class CurrencyService {
     }
 
     String codeForExchange;
+    String details;
 
     public String CurrencyDetails() {
         RestTemplate restTemplate = new RestTemplate();
@@ -115,7 +110,7 @@ public class CurrencyService {
         try {
             // Fetch currency data from the REST API
             Map<String, List<Map<String, Object>>> currencies = restTemplate.getForObject(baseUrl + "/currencies", Map.class);
-
+            boolean isCurrencyValid = true;
             // Display currency data
             if (currencies != null) {
                 // Sort the currencies by region alphabetically
@@ -148,16 +143,27 @@ public class CurrencyService {
                 }
                 if (!found) {
                     System.out.println("Currency code not found.");
+                    isCurrencyValid = false;
 
                 }
             } else {
                 System.out.println("No currency data available.");
             }
-            makeExchange();
+            if(isCurrencyValid) {
+                makeExchange();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return codeForExchange;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void addDetails() {
+        convertedAmountTranscript.add(details);
     }
 
     public double getFeeAmount() {
@@ -244,7 +250,10 @@ public class CurrencyService {
 
                         // Store the amount to withdraw and the fee
                         String transactionDetails = "Currency Name: " + currencyName + ", Converted Amount: " + roundedConvertedAmount;
-                        convertedAmountTranscript.add(transactionDetails);
+
+                            //convertedAmountTranscript.add(transactionDetails);
+                            details = transactionDetails;
+
                         feeAmount = fee;
                         amountToWithdraw = amountUSD;
 
@@ -265,68 +274,4 @@ public class CurrencyService {
         return new double[]{amountToWithdraw, feeAmount, 0}; // 0 for convertedAmountTranscript as it's now a list of strings
     }
 
-
-    public double displayCurrencyDetails() {
-        RestTemplate restTemplate = new RestTemplate();
-        double amountUSD = 0;
-        Scanner scanner = new Scanner(System.in);
-
-        try {
-            // Fetch currency data from the REST API
-            Map<String, List<Map<String, Object>>> currencies = restTemplate.getForObject(baseUrl + "/currencies", Map.class);
-
-            // Display currency data
-            if (currencies != null) {
-                // Sort the currencies by region alphabetically
-                List<Map.Entry<String, List<Map<String, Object>>>> sortedCurrencies = currencies.entrySet().stream()
-                        .sorted(Comparator.comparing(Map.Entry::getKey))
-                        .collect(Collectors.toList());
-
-                // Prompt the user to select a currency code
-                System.out.println("Please enter a currency code to display details & convert:");
-                String currencyCode = scanner.nextLine().toUpperCase(); // Convert input to uppercase for consistency
-
-
-                // Check if the entered currency code exists in the map
-                boolean found = false;
-                for (List<Map<String, Object>> currencyList : currencies.values()) {
-                    for (Map<String, Object> currencyInfo : currencyList) {
-                        if (currencyInfo.get("code").equals(currencyCode)) {
-                            found = true;
-                            System.out.println("Details for currency code " + currencyCode + ":");
-                            System.out.println("Name: " + currencyInfo.get("name"));
-                            double currencyValue = (double) currencyInfo.get("value");
-                            System.out.println("Value: " + currencyValue);
-                            System.out.println();
-
-                            // Perform the conversion
-                            double convertedAmount = amountUSD * currencyValue;
-
-                            // Round the conversion result to two decimal points
-                            String roundedConvertedAmount = String.format("%.2f", convertedAmount);
-
-                            // Display the conversion result
-                            System.out.println(amountUSD + " USD is equivalent to " + roundedConvertedAmount + " " + currencyCode);
-
-                            // Store the amount to withdraw
-                            setAmountToWithdraw(convertedAmount);
-
-                            break;
-                        }
-                    }
-                    if (found) {
-                        break;
-                    }
-                }
-                if (!found) {
-                    System.out.println("Invalid currency code.");
-                }
-            } else {
-                System.out.println("No currency data available.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-      return 0;
-    }
 }

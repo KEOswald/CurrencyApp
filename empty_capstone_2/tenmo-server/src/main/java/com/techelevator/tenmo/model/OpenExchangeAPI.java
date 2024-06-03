@@ -11,7 +11,7 @@ public class OpenExchangeAPI {
     //Open Exchange API information
     private static final String API_BASE_URL = "https://openexchangerates.org/api/";
     private static final String LATEST_ENDPOINT = "latest.json";
-    private static final String API_KEY = "5629b904a3d64d0f97fe50ca2c9117af";
+    private static final String API_KEY = "123";
 
     public static String getApiBaseUrl() {
         return API_BASE_URL;

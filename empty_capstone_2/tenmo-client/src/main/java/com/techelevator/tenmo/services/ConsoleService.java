@@ -3,7 +3,6 @@ package com.techelevator.tenmo.services;
 
 import com.techelevator.tenmo.model.UserCredentials;
 
-import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -69,17 +68,6 @@ public class ConsoleService {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a number.");
-            }
-        }
-    }
-
-    public BigDecimal promptForBigDecimal(String prompt) {
-        System.out.print(prompt);
-        while (true) {
-            try {
-                return new BigDecimal(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a decimal number.");
             }
         }
     }
